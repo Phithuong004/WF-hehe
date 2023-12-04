@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Enter your description here"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <title>Title</title>
+</head>
+<body ng-app="myApp">
+    <div class="container" ng-controller="labCtrl">
+        <h3 class="text-warning text-center">DANH SÁCH SINH VIÊN</h3>
+        <div class="row mt-3">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="currentClassSelect">Lớp hiện tại</label>
+                            <select ng-model="selectedCurrentClass" ng-options="class as class.tenlop for class in DS_Lop" class="form-control" id="currentClassSelect"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="transferClassSelect">Lớp chuyển</label>
+                            <select ng-model="selectedTransferClass" ng-options="class as class.tenlop for class in DS_Lop" class="form-control" id="transferClassSelect"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Họ và tên</span>
+                    <input type="text" ng-model="newStudent.tensv" class="form-control" placeholder="Nhập họ tên sinh viên">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary" ng-click="addStudent()"><i class="fa fa-plus"></i> Thêm</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="">Danh sách lớp hiện tại</label>
+                            <select style="height: 300px;" multiple ng-model="currentClassStudents" class="form-control" ng-options="student.tensv for student in sinhvien | filter:{malop_sv: selectedCurrentClass.malop}"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center mt-4">
+                        <button style="margin: 10px; width: 120px; font-size: 20px;" type="button" class="btn btn-primary" ng-click="moveStudent('currentToTransfer')"><i class="fa fa-angle-right"></i></button> <br>
+                        <button style="margin: 10px; width: 120px; font-size: 20px;" type="button" class="btn btn-primary" ng-click="moveStudent('transferToCurrent')"><i class="fa fa-angle-left"></i></button> <br>
+                        <button style="margin: 10px; width: 120px; font-size: 20px;" type="button" class="btn btn-primary" ng-click="moveAllStudents('currentToTransfer')"><i class="fa fa-angle-double-right"></i></button> <br>
+                        <button style="margin: 10px; width: 120px; font-size: 20px;" type="button" class="btn btn-primary" ng-click="moveAllStudents('transferToCurrent')"><i class="fa fa-angle-double-left"></i></button> <br>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="">Danh sách lớp chuyển</label>
+                            <select style="height: 300px;" multiple ng-model="transferClassStudents" class="form-control" ng-options="student.tensv for student in sinhvien | filter:{malop_sv: selectedTransferClass.malop}"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script>
+        var app = angular.module('myApp', [])
+
+        app.controller('labCtrl', function ($scope) {
+            $scope.DS_Lop = [
+                { malop: 'CD22CT1', tenlop: 'CD22CT1' },
+                { malop: 'CD22KT1', tenlop: 'CD22KT1' },
+                { malop: 'CD22DH1', tenlop: 'CD22DH1' },
+                { malop: 'CD22ML1', tenlop: 'CD22ML1' },
+                { malop: 'CD22TC1', tenlop: 'CD22TC1' }
+            ];
+
+            $scope.sinhvien = [
+                { masv: 501220001, tensv: 'Nguyễn Văn An', malop_sv: 'CD22CT1' },
+                { masv: 501220002, tensv: 'Nguyễn Văn Thành', malop_sv: 'CD22CT1' },
+                { masv: 501220003, tensv: 'Nguyễn Thành Nhân', malop_sv: 'CD22CT1' },
+                { masv: 501220004, tensv: 'Nguyễn Thành Lợi', malop_sv: 'CD22CT1' },
+                { masv: 501220005, tensv: 'Nguyễn Văn An', malop_sv: 'CD22KT1' },
+                { masv: 501220006, tensv: 'Quách Tấn Thành', malop_sv: 'CD22KT1' },
+                { masv: 501220007, tensv: 'Trần Ngọc Lĩnh', malop_sv: 'CD22KT1' },
+                { masv: 501220008, tensv: 'Nguyễn Hoài Thành', malop_sv: 'CD22KT1' }
+            ];
+
+            $scope.newStudent = { tensv: "" };
+            $scope.currentClassStudents = [];
+            $scope.transferClassStudents = [];
+
+            $scope.addStudent = function () {
+                if ($scope.newStudent.tensv) {
+                    $scope.sinhvien.push({ masv: $scope.sinhvien.length + 1, tensv: $scope.newStudent.tensv, malop_sv: $scope.selectedCurrentClass.malop });
+                    $scope.newStudent.tensv = "";
+                }
+            };
+
+            $scope.moveStudent = function (direction) {
+                if (direction === 'currentToTransfer') {
+                    for (var i = 0; i < $scope.sinhvien.length; i++) {
+                        if ($scope.sinhvien[i].tensv === $scope.currentClassStudents[0].tensv) {
+                            $scope.sinhvien[i].malop_sv = $scope.selectedTransferClass.malop;
+                            break;
+                        }
+                    }
+                } else if (direction === 'transferToCurrent') {
+                    for (var i = 0; i < $scope.sinhvien.length; i++) {
+                        if ($scope.sinhvien[i].tensv === $scope.transferClassStudents[0].tensv) {
+                            $scope.sinhvien[i].malop_sv = $scope.selectedCurrentClass.malop;
+                            break;
+                        }
+                    }
+                }
+            };
+
+            $scope.moveAllStudents = function (direction) {
+                if (direction === 'currentToTransfer') {
+                    for (var i = 0; i < $scope.sinhvien.length; i++) {
+                        if ($scope.sinhvien[i].malop_sv === $scope.selectedCurrentClass.malop) {
+                            $scope.sinhvien[i].malop_sv = $scope.selectedTransferClass.malop;
+                        }
+                    }
+                } else if (direction === 'transferToCurrent') {
+                    for (var i = 0; i < $scope.sinhvien.length; i++) {
+                        if ($scope.sinhvien[i].malop_sv === $scope.selectedTransferClass.malop) {
+                            $scope.sinhvien[i].malop_sv = $scope.selectedCurrentClass.malop;
+                        }
+                    }
+                }
+            };
+        });
+    </script>
+</body>
+</html>

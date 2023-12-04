@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Enter your description here"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>    
+</head>
+<body>
+    <style>
+        .container{
+            margin: auto;
+            width: 600px;
+        }
+        .body{
+            display: flex;
+            margin-top: 10px;
+        }
+        .o1{
+            border: 1px solid black;
+            width: 200px;
+            text-align: center;
+        }
+        .o2{
+            margin-left: 10px;
+        }
+        #btn{
+            width: 200px;
+            margin-top: 2px;
+            border: 1px solid black;
+            border-radius: 10px;
+            background-color: rgb(0, 140, 255);
+            color: white;
+        }
+        #btn:hover{
+            color: rgb(0, 140, 255);
+            background-color: white;
+            transition: 0.2s;
+        }
+    </style>
+    <div class="container" ng-app="myApp" ng-controller="myCtrl">
+        <div class="header">
+            Nhập số nguyên <input type="text" ng-model="newItem"> <button id="btn" ng-click="themso()">Thêm</button>
+        </div>
+        <div class="body">
+            <div class="o1">
+                <table>
+                    <tr ng-repeat="item in list">
+                        <td>{{ item.id }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="o2">
+                <button id="btn" ng-click="tang2()">Tăng mỗi phần tử lên 2</button>
+                <br>
+                <button id="btn" ng-click="sochandau()">Chọn số chẵn đầu</button>
+                <br>
+                <button id="btn" ng-click="solecuoi()">Chọn số lẻ cuối</button>
+                <br>
+                <button id="btn" ng-click="xoadangchon()">Xóa phần tử đang chọn</button>
+                <br>
+                <button id="btn" ng-click="xoaptdau()">Xóa phần tử đầu</button>
+                <br>
+                <button id="btn" ng-click="xoaptcuoi()">Xóa phần tử cuối</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function ($scope) {
+            $scope.list = [
+                { id: 2, selected: false },
+                { id: 4, selected: false },
+                { id: 7, selected: false },
+                { id: 10, selected: false },
+                { id: 9, selected: false },
+                { id: 5, selected: false }
+            ];
+
+            $scope.themso = function () {
+                if ($scope.newItem) {
+                    $scope.list.push({ id: parseInt($scope.newItem), selected: false });
+                    $scope.newItem = '';
+                }
+            };
+
+            $scope.tang2 = function () {
+                for (var i = 0; i < $scope.list.length; i++) {
+                    $scope.list[i].id += 2;
+                }
+            };
+
+            $scope.sochandau = function () {
+                for (var i = 0; i < $scope.list.length; i++) {
+                    if ($scope.list[i].id % 2 === 0) {
+                        $scope.list[i].selected = true;
+                        break;
+                    }
+                }
+            };
+
+            $scope.solecuoi = function () {
+                for (var i = $scope.list.length - 1; i >= 0; i--) {
+                    if ($scope.list[i].id % 2 !== 0) {
+                        $scope.list[i].selected = true;
+                        break;
+                    }
+                }
+            };
+
+            $scope.xoadangchon = function () {
+                for (var i = $scope.list.length - 1; i >= 0; i--) {
+                    if ($scope.list[i].selected) {
+                        $scope.list.splice(i, 1);
+                    }
+                }
+            };
+
+            $scope.xoaptdau = function () {
+                $scope.list.shift();
+            };
+
+            $scope.xoaptcuoi = function () {
+                $scope.list.pop();
+            };
+        });
+    </script>
+</body>
+</html>
